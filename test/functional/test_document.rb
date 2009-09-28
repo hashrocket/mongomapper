@@ -96,6 +96,20 @@ class DocumentTest < Test::Unit::TestCase
       end
     end
 
+    context "Using key with type that is a document" do
+      setup do
+        @document.key :message, Message
+      end
+      should "embed the document" do
+        doc = @document.new
+        doc.message = Message.new(:body => "Testing")
+        doc.save
+        document = @document.find(doc.id)
+        document.message.should == doc.message
+        document.attributes["message"].should == {"body" => "Testing"}
+      end
+    end
+
     context "Using key with type Hash" do
       setup do
         @document.key :foo, Hash

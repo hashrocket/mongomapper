@@ -62,24 +62,21 @@ module MongoMapper
           elsif type == Date      then normalize_date(value)
           elsif type == Boolean   then Boolean.mm_typecast(value)
           elsif type == Integer
-            # ganked from datamapper
             value_to_i = value.to_i
             if value_to_i == 0
               value.to_s =~ /^(0x|0b)?0+/ ? 0 : nil
             else
               value_to_i
             end
-          elsif embedded_document?
-            typecast_embedded_document(value)
           else
-            value
+            typecast_document(value)
           end
         rescue
           value
         end
       end
 
-      def typecast_embedded_document(value)
+      def typecast_document(value)
         value.is_a?(type) ? value : type.new(value)
       end
   end

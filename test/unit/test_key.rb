@@ -190,6 +190,12 @@ class KeyTest < Test::Unit::TestCase
       key.set('1').should == ['1']
     end
 
+    should "correctly typecast a Document" do
+      message = Message.new
+      key = Key.new(:foo, :type => Message)
+      key.set(message).should == message
+    end
+
     should "correctly typecast Hash using indifferent access" do
       key = Key.new(:foo, Hash)
       key.set(:foo => 'bar')[:foo].should == 'bar'
