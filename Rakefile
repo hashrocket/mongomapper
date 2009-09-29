@@ -4,21 +4,21 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "mongomapper"
+    gem.name = "hashrocket-mongomapper"
     gem.summary = %Q{Awesome gem for modeling your domain and storing it in mongo}
     gem.email = "nunemaker@gmail.com"
     gem.homepage = "http://github.com/jnunemaker/mongomapper"
     gem.authors = ["John Nunemaker"]
     gem.rubyforge_project = "mongomapper"
-    
+
     gem.add_dependency('activesupport')
     gem.add_dependency('mongodb-mongo', '0.14.1')
     gem.add_dependency('hashrocket-validatable', '>= 1.7.3')
-    
+
     gem.add_development_dependency('mocha', '0.9.4')
     gem.add_development_dependency('jnunemaker-matchy', '0.4.0')
   end
-  
+
   Jeweler::RubyforgeTasks.new do |rubyforge|
     rubyforge.doc_task = "rdoc"
   end
