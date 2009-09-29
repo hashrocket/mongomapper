@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{hashrocket-mongomapper}
-  s.version = "0.3.16"
+  s.version = "0.3.17"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Nunemaker"]
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/mmconsole",
+     "hashrocket-mongomapper.gemspec",
      "lib/mongomapper.rb",
      "lib/mongomapper/associations.rb",
      "lib/mongomapper/associations/base.rb",
@@ -51,7 +52,6 @@ Gem::Specification.new do |s|
      "lib/mongomapper/serializers/json_serializer.rb",
      "lib/mongomapper/support.rb",
      "lib/mongomapper/validations.rb",
-     "mongomapper.gemspec",
      "test/NOTE_ON_TESTING",
      "test/functional/associations/test_belongs_to_polymorphic_proxy.rb",
      "test/functional/associations/test_belongs_to_proxy.rb",
