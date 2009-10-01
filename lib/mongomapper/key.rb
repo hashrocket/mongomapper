@@ -80,7 +80,7 @@ module MongoMapper
           if    type == String    then value.to_s
           elsif type == Float     then value.to_f
           elsif type == Array     then deserialize_array(value)
-          elsif type == Time      then time_to_local(value)
+          elsif type == Time      then value.utc
           elsif type == Date      then normalize_date(value)
           elsif type == Boolean   then Boolean.mm_typecast(value)
           elsif type == Integer
