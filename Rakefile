@@ -18,7 +18,9 @@ begin
     gem.add_development_dependency('mocha', '0.9.4')
     gem.add_development_dependency('jnunemaker-matchy', '0.4.0')
   end
-
+  
+  Jeweler::GemcutterTasks.new
+  
   Jeweler::RubyforgeTasks.new do |rubyforge|
     rubyforge.doc_task = "rdoc"
   end
