@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{hashrocket-mongomapper}
-  s.version = "0.3.22"
+  s.version = "0.3.23"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Nunemaker"]
-  s.date = %q{2009-10-02}
+  s.date = %q{2009-10-29}
   s.default_executable = %q{mmconsole}
   s.email = %q{nunemaker@gmail.com}
   s.executables = ["mmconsole"]
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "bin/mmconsole",
      "hashrocket-mongomapper.gemspec",
+     "lib/mongo_mapper.rb",
      "lib/mongomapper.rb",
      "lib/mongomapper/associations.rb",
      "lib/mongomapper/associations/base.rb",
