@@ -74,7 +74,7 @@ module MongoMapper
       def typecast(value)
         return value if type.nil?
         return HashWithIndifferentAccess.new(value) if value.is_a?(Hash) && type == Hash
-        return time_to_local(value.utc) if type == Time && value.kind_of?(type)
+        return value.utc if type == Time && value.kind_of?(type)
         return value if (value.kind_of?(type) || value.nil?) && type != Array
         begin
           if    type == String    then value.to_s
