@@ -13,7 +13,7 @@ class DocumentTest < Test::Unit::TestCase
       key :date, Date
     end
 
-    @document.collection.clear
+    @document.collection.drop
   end
 
   context "Saving a document with a custom id" do
@@ -27,12 +27,12 @@ class DocumentTest < Test::Unit::TestCase
 
   context "Loading a document from the database with keys that are not defined" do
     setup do
-      @id = XGen::Mongo::Driver::ObjectID.new.to_s
+      @id = Mongo::ObjectID.new.to_s
       @document.collection.insert({
         :_id            => @id,
-        :first_name     => 'John', 
-        :last_name      => 'Nunemaker', 
-        :age            => 27, 
+        :first_name     => 'John',
+        :last_name      => 'Nunemaker',
+        :age            => 27,
         :favorite_color => 'red',
         :skills         => ['ruby', 'rails', 'javascript', 'xhtml', 'css']
       })
@@ -47,7 +47,7 @@ class DocumentTest < Test::Unit::TestCase
       doc.skills.should == ['ruby', 'rails', 'javascript', 'xhtml', 'css']
     end
   end
-  
+
   context "Document Class Methods" do
     context "Using key with type Array" do
       setup do
@@ -204,14 +204,14 @@ class DocumentTest < Test::Unit::TestCase
         doc = @document.new(:foo => address)
         address.new_record?.should == true
       end
-      
+
       should "not be a new_record after document is saved" do
         address = Address.new(:city => 'South Bend', :state => 'IN')
         doc = @document.new(:foo => address)
         doc.save
         address.new_record?.should == false
       end
-      
+
       should "not be a new_record when document is read back" do
         address = Address.new(:city => 'South Bend', :state => 'IN')
         doc = @document.new(:foo => address)
@@ -220,7 +220,7 @@ class DocumentTest < Test::Unit::TestCase
         read_doc.foo.new_record?.should == false
       end
     end
-    
+
     context "Creating a single document" do
       setup do
         @doc_instance = @document.create({:first_name => 'John', :last_name => 'Nunemaker', :age => '27'})
@@ -252,7 +252,7 @@ class DocumentTest < Test::Unit::TestCase
         @document = Class.new do
           include MongoMapper::Document
         end
-        @document.collection.clear
+        @document.collection.drop
       end
 
       should "create the document" do
@@ -372,7 +372,7 @@ class DocumentTest < Test::Unit::TestCase
 
       context "with :all" do
         should "find all documents" do
-          @document.find(:all, :order => 'first_name').should == [@doc1, @doc3, @doc2]
+          @document.find(:all, :sort => [['first_name', 'asc']]).should == [@doc1, @doc3, @doc2]
         end
 
         should "be able to add conditions" do
@@ -382,33 +382,33 @@ class DocumentTest < Test::Unit::TestCase
 
       context "with #all" do
         should "find all documents based on criteria" do
-          @document.all(:order => 'first_name').should == [@doc1, @doc3, @doc2]
-          @document.all(:conditions => {:last_name => 'Nunemaker'}, :order => 'age desc').should == [@doc1, @doc3]
+          @document.all(:sort => [['first_name', 'asc']]).should == [@doc1, @doc3, @doc2]
+          @document.all(:conditions => {:last_name => 'Nunemaker'}, :sort => [['age', 'desc']]).should == [@doc1, @doc3]
         end
       end
 
       context "with :first" do
         should "find first document" do
-          @document.find(:first, :order => 'first_name').should == @doc1
+          @document.find(:first, :sort => [['first_name', 'asc']]).should == @doc1
         end
       end
 
       context "with #first" do
         should "find first document based on criteria" do
-          @document.first(:order => 'first_name').should == @doc1
+          @document.first(:sort => [['first_name', 'asc']]).should == @doc1
           @document.first(:conditions => {:age => 28}).should == @doc2
         end
       end
 
       context "with :last" do
         should "find last document" do
-          @document.find(:last, :order => 'age').should == @doc2
+          @document.find(:last, :sort => [["age", "asc"]]).should == @doc2
         end
       end
 
       context "with #last" do
         should "find last document based on criteria" do
-          @document.last(:order => 'age').should == @doc2
+          @document.last(:sort => [["age", "asc"]]).should == @doc2
           @document.last(:conditions => {:age => 28}).should == @doc2
         end
       end
@@ -416,7 +416,7 @@ class DocumentTest < Test::Unit::TestCase
       context "with :find_by" do
         should "find document based on argument" do
           @document.find_by_first_name('John').should == @doc1
-          @document.find_by_last_name('Nunemaker', :order => 'age desc').should == @doc1
+          @document.find_by_last_name('Nunemaker', :sort => [['age', 'desc']]).should == @doc1
           @document.find_by_age(27).should == @doc1
         end
 
@@ -446,7 +446,7 @@ class DocumentTest < Test::Unit::TestCase
         end
 
         should "find last document based on arguments" do
-          doc = @document.find_last_by_last_name('Nunemaker', :order => 'age')
+          doc = @document.find_last_by_last_name('Nunemaker', :sort => [["age", "asc"]])
           doc.should == @doc1
         end
 
@@ -762,14 +762,12 @@ class DocumentTest < Test::Unit::TestCase
 
     context "Indexing" do
       setup do
-        @document.collection.drop_indexes
+        @document.collection.drop
       end
 
       should "allow creating index for a key" do
         index_name = nil
-        lambda {
-          index_name = @document.ensure_index :first_name
-        }.should change { @document.collection.index_information.size }.by(1)
+        index_name = @document.ensure_index :first_name
 
         index_name.should == 'first_name_1'
         index = @document.collection.index_information[index_name]
@@ -784,9 +782,7 @@ class DocumentTest < Test::Unit::TestCase
 
       should "allow creating index on multiple keys" do
         index_name = nil
-        lambda {
-          index_name = @document.ensure_index [[:first_name, 1], [:last_name, -1]]
-        }.should change { @document.collection.index_information.size }.by(1)
+        index_name = @document.ensure_index [[:first_name, 1], [:last_name, -1]]
 
         [ 'first_name_1_last_name_-1', 'last_name_-1_first_name_1' ].should include(index_name)
 
@@ -844,12 +840,12 @@ class DocumentTest < Test::Unit::TestCase
       from_db = RealPerson.find(person.id)
       from_db.name.should == "David"
     end
-    
+
     context "Saving documents with Date key set" do
       setup do
         @doc = @document.new(:first_name => 'John', :age => '27', :date => "12/01/2009")
       end
-    
+
       should "save the Date value as a Time object" do
         @doc.save
         @doc.date.should == Date.new(2009, 12, 1)
@@ -960,16 +956,16 @@ class DocumentTest < Test::Unit::TestCase
       from_db.age.should == 30
     end
   end
-  
+
   context "update_attributes" do
     setup do
       @document.key :foo, String, :required => true
     end
-    
+
     should "return true if document valid" do
       @document.new.update_attributes(:foo => 'bar').should be_true
     end
-    
+
     should "return false if document not valid" do
       @document.new.update_attributes({}).should be_false
     end
@@ -1043,7 +1039,7 @@ class DocumentTest < Test::Unit::TestCase
     setup do
       @document.timestamps!
     end
-    
+
     should "set created_at and updated_at on create" do
       doc = @document.new(:first_name => 'John', :age => 27)
       doc.created_at.should be(nil)

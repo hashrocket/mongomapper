@@ -39,16 +39,16 @@ require dir + 'document'
 
 module MongoMapper
   DocumentNotFound  = Class.new(StandardError)
-  
+
   DocumentNotValid  = Class.new(StandardError) do
     def initialize(document)
       @document = document
       super("Validation failed: #{@document.errors.full_messages.join(", ")}")
     end
   end
-  
+
   def self.connection
-    @@connection ||= XGen::Mongo::Driver::Connection.new
+    @@connection ||= Mongo::Connection.new
   end
 
   def self.connection=(new_connection)

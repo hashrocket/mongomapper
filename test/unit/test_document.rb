@@ -18,11 +18,11 @@ class DocumentTest < Test::Unit::TestCase
     end
 
     should "have a connection" do
-      @document.connection.should be_instance_of(XGen::Mongo::Driver::Connection)
+      @document.connection.should be_instance_of(Mongo::Connection)
     end
 
     should "allow setting different connection without affecting the default" do
-      conn = XGen::Mongo::Driver::Connection.new
+      conn = Mongo::Connection.new
       @document.connection conn
       @document.connection.should == conn
       @document.connection.should_not == MongoMapper.connection
@@ -37,23 +37,23 @@ class DocumentTest < Test::Unit::TestCase
       end
       another_document.database.should == MongoMapper.database
     end
-    
+
     should "default collection name to class name tableized" do
       class Item
         include MongoMapper::Document
       end
-      
-      Item.collection.should be_instance_of(XGen::Mongo::Driver::Collection)
+
+      Item.collection.should be_instance_of(Mongo::Collection)
       Item.collection.name.should == 'items'
     end
 
     should "allow setting the collection name" do
       @document.collection('foobar')
-      @document.collection.should be_instance_of(XGen::Mongo::Driver::Collection)
+      @document.collection.should be_instance_of(Mongo::Collection)
       @document.collection.name.should == 'foobar'
     end
   end # Document class
-  
+
   context "Documents that inherit from other documents" do
     should "default collection to inherited class" do
       Message.collection.name.should == 'messages'
@@ -61,7 +61,7 @@ class DocumentTest < Test::Unit::TestCase
       Exit.collection.name.should    == 'messages'
       Chat.collection.name.should    == 'messages'
     end
-    
+
     should "track subclasses" do
       Message.subclasses.should == [Enter, Exit, Chat]
     end
@@ -75,7 +75,7 @@ class DocumentTest < Test::Unit::TestCase
         key :name, String
         key :age, Integer
       end
-      @document.collection.clear
+      @document.collection.drop
     end
 
     should "have access to the class's collection" do
@@ -109,14 +109,14 @@ class DocumentTest < Test::Unit::TestCase
       should "be true if no id" do
         @document.new.new?.should be_true
       end
-      
+
       should "be true if id but using custom id and not saved yet" do
         doc = @document.new
         doc.id = '1234'
         doc.new?.should be_true
       end
     end
-    
+
     context "equality" do
       should "be equal if id and class are the same" do
         (@document.new('_id' => 1) == @document.new('_id' => 1)).should be(true)

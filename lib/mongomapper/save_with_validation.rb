@@ -6,14 +6,14 @@ module MongoMapper
         alias_method_chain :save!, :validation
       end
     end
-    
+
     private
       def save_with_validation
         valid? ? save_without_validation : false
       end
-      
+
       def save_with_validation!
         valid? ? save_without_validation! : raise(DocumentNotValid.new(self))
       end
-  end  
+  end
 end

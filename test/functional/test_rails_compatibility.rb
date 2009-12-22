@@ -5,18 +5,18 @@ class TestRailsCompatibility < Test::Unit::TestCase
     include MongoMapper::EmbeddedDocument
     key :for_all, String
   end
-  
+
   class Order
     include MongoMapper::Document
     many :items, :class_name => 'TestRailsCompatibility::Item'
     key :order_only, String
   end
-  
+
   context "Document" do
     setup do
-      Order.collection.clear
+      Order.collection.drop
     end
-  
+
     should "have to_param that returns id" do
       instance = Order.create('_id' => 1234)
       instance.to_param.should == '1234'

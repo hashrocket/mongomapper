@@ -63,7 +63,7 @@ module MongoMapper
         klass.delete_all(conditions.deep_merge(scoped_conditions))
         reset
       end
-      
+
       def nullify
         criteria = FinderOptions.to_mongo_criteria(scoped_conditions)
         all(criteria).each do |doc|

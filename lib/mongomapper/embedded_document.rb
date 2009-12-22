@@ -171,14 +171,14 @@ module MongoMapper
           self.attributes = attrs
         end
 
-        if self.class.embeddable? 
+        if self.class.embeddable?
           if read_attribute(:_id).blank?
-            write_attribute :_id, XGen::Mongo::Driver::ObjectID.new.to_s
+            write_attribute :_id, Mongo::ObjectID.new.to_s
             @new_record = true
           end
         end
       end
-      
+
       def new_record?
         !!@new_record
       end
@@ -260,7 +260,7 @@ module MongoMapper
         def mongodb_attributes
           attrs = HashWithIndifferentAccess.new
           self.class.keys.each_pair do |name, key|
-            value = 
+            value =
               if key.native?
                 if key.type == Date and date = instance_variable_get("@#{key.name}")
                   key.normalize_date(date)
@@ -274,13 +274,13 @@ module MongoMapper
                   embedded_document.send :mongodb_attributes
                 end
               end
-          
+
             attrs[name] = value unless value.nil?
           end
           @new_record = false
           attrs.merge!(embedded_association_attributes)
         end
-      
+
         def ensure_key_exists(name)
           self.class.key(name) unless respond_to?("#{name}=")
         end
